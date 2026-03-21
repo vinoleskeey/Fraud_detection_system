@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Simple Fraud Checker</title>
+
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .preset-btn { background: #6b7280; margin: 10px; width: auto; padding: 12px 24px; }
+        .preset-btn:hover { background: #4b5563; }
+        .simple-form { grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tooltip { position: relative; }
+        .tooltip .tip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; padding: 8px; border-radius: 6px; white-space: nowrap; z-index: 10; }
+        .tooltip:hover .tip { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🛡️ Fraud Detector</h1>
+            <p>Enter transaction details or use Quick Tests. AI checks for fraud instantly!</p>
+        </header>
+
+        <div class="card">
+            <h2>💳 Quick Transaction Check</h2>
+            
+            <div class="form-grid simple-form">
+                <div class="form-group tooltip">
+                    <label>💰 Amount ($)</label>
+                    <input type="number" id="Amount" step="0.01" placeholder="100" value="100">
+                    <div class="tip">Transaction value</div>
+                </div>
+                <div class="form-group tooltip">
+                    <label>⏰ Time (seconds)</label>
+                    <input type="number" id="Time" placeholder="0" value="0">
+                    <div class="tip">Time since first transaction</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
+                <button class="preset-btn" onclick="loadPreset('safe')">✅ Safe Test</button>
+                <button class="preset-btn" onclick="loadPreset('fraud')">🚨 Fraud Test</button>
+                <button class="preset-btn" onclick="loadPreset('random')">🎲 Random</button>
+            </div>
+
+            <button id="predictBtn" class="btn" onclick="predictFraud()">🔍 Check for Fraud</button>
+        </div>
+
+        <div id="resultSection" class="card" style="display: none;">
+            <h2>🎯 Result</h2>
+            <div id="riskDisplay">
+                <canvas id="riskGauge" width="250" height="250"></canvas>
+                <div id="riskText"></div>
+                <div id="confidenceText"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Recent Checks <button class="btn" onclick="loadHistory()" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">🔄 Refresh</button></h2>
+            <div id="historyTable">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Risk %</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Expert mode toggle -->
+        <div class="card" style="margin-top: 20px;">
+            <button class="btn" onclick="toggleExpert()">⚙️ Expert Mode (All 30 features)</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/app_simple.js"></script>
+    <script>
+        // Quick presets (bank-processed features)
+        const presets = {
+            safe: { Amount: 50, Time: 10, V1: 0, V2: 0.1, V3: -0.1 },
+            fraud: { Amount: 1000, Time: 100, V1: -5, V2: 4.5, V3: -2.8 },
+            random: { Amount: Math.random()*1000, Time: Math.random()*10000 }
+        };
+
+        function loadPreset(type) {
+            const p = presets[type];
+            document.getElementById('Amount').value = p.Amount;
+            document.getElementById('Time').value = p.Time;
+            // Fill V1-V28 with 0 or random small values
+            for (let i = 1; i <= 28; i++) {
+                document.getElementById(`V${i}`) && (document.getElementById(`V${i}`).value = 0);
+            }
+        }
+
+        function toggleExpert() {
+            location.href = '/'; // Hide for now - toggle back to original later
+        }
+    </script>
+</body>
+</html>
