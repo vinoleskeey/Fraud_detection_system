@@ -5,7 +5,6 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from utils.config import Config
 from utils.extensions import db, cors
-from routes.fraud_routes import fraud_bp
 
 
 def create_app():
@@ -16,12 +15,11 @@ def create_app():
     db.init_app(app)
 
     try:
-        import routes.fraud_routes
-        print('Models loaded successfully')
+        from routes.fraud_routes import fraud_bp
+        app.register_blueprint(fraud_bp, url_prefix='/api')
+        print('Routes loaded successfully')
     except Exception as e:
-        print(f'Model load error: {e}')
-
-    app.register_blueprint(fraud_bp, url_prefix='/api')
+        print(f'Route load error: {e}')
 
     @app.route('/')
     def home():
@@ -47,4 +45,8 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(
+        debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true',
+        host=os.environ.get('FLASK_HOST', '127.0.0.1'),
+        port=int(os.environ.get('FLASK_PORT', 5000)),
+    )

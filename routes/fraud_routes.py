@@ -79,7 +79,10 @@ def predict_fraud():
 @fraud_bp.route('/history', methods=['GET'])
 def get_history():
     try:
-        limit = min(int(request.args.get('limit', 50)), 200)
+        try:
+            limit = min(int(request.args.get('limit', 50)), 200)
+        except (ValueError, TypeError):
+            limit = 50
         transactions = (
             Transaction.query
             .order_by(Transaction.created_at.desc())

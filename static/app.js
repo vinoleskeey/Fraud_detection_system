@@ -107,8 +107,9 @@ async function predictFraud() {
     section.innerHTML = `
       <div class="card">
         <div class="section-title"><span class="icon">!</span> Error</div>
-        <p style="color:#fca5a5">${err.message}</p>
+        <p id="errorMessage" style="color:#fca5a5"></p>
       </div>`;
+    document.getElementById('errorMessage').textContent = err.message;
   } finally {
     btn.disabled  = false;
     btn.innerHTML = '<span>&#128269;</span> Analyze Transaction';

@@ -14,10 +14,7 @@ def load_and_clean_data(path=None):
 
 
 def preprocess_for_prediction(data: dict) -> np.ndarray:
-    try:
-        scaler = joblib.load(Config.SCALER_PATH)
-    except Exception:
-        scaler = StandardScaler()
+    scaler = joblib.load(Config.SCALER_PATH)
 
     v_features = [
         'V1',  'V2',  'V3',  'V4',  'V5',  'V6',  'V7',  'V8',  'V9',  'V10',

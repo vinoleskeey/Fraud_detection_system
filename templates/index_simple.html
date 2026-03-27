@@ -130,20 +130,39 @@
     let gaugeChart = null;
 
     const PRESETS = {
-      safe: { Amount: 45.50, Time: 3600 },
-      fraud: { Amount: 2135.00, Time: 86400 },
+      safe: {
+        Amount: 45.50, Time: 3600,
+        V1: 1.19, V2: 0.26, V3: 0.17, V4: 0.45, V5: -0.06, V6: -0.08,
+        V7: 0.12, V8: -0.08, V9: 0.29, V10: -0.12, V11: 0.17, V12: 0.27,
+        V13: -0.04, V14: -0.11, V15: 0.05, V16: -0.07, V17: 0.09, V18: 0.15,
+        V19: -0.05, V20: 0.04, V21: 0.01, V22: 0.03, V23: 0.00, V24: 0.02,
+        V25: -0.01, V26: 0.05, V27: 0.00, V28: 0.01,
+      },
+      fraud: {
+        // Real fraud transaction from the training dataset (Class=1)
+        Amount: 0.0, Time: 406,
+        V1: -2.3122, V2: 1.9520, V3: -1.6099, V4: 3.9979, V5: -0.5222, V6: -1.4265,
+        V7: -2.5374, V8: 1.3917, V9: -2.7701, V10: -2.7723, V11: 3.2020, V12: -2.8996,
+        V13: -0.5952, V14: -4.2895, V15: 0.3898, V16: -1.1407, V17: -2.8304, V18: -0.0168,
+        V19: 0.4165, V20: 0.1267, V21: 0.5176, V22: -0.0354, V23: -0.4654, V24: 0.2480,
+        V25: 0.6514, V26: 0.0693, V27: -0.2258, V28: -0.1639,
+      },
     };
+
+    let currentPreset = null;
 
     function loadPreset(type) {
       if (type === 'random') {
         document.getElementById('Amount').value = (Math.random() * 2000 + 10).toFixed(2);
         document.getElementById('Time').value   = Math.floor(Math.random() * 172800);
+        currentPreset = null;
         showToast('Random transaction loaded', 'info');
         return;
       }
       const p = PRESETS[type];
       document.getElementById('Amount').value = p.Amount;
       document.getElementById('Time').value   = p.Time;
+      currentPreset = p;
       showToast(type === 'safe' ? 'Safe preset loaded' : 'Fraud preset loaded',
                 type === 'safe' ? 'success' : 'error');
     }
@@ -153,7 +172,9 @@
         Time:   parseFloat(document.getElementById('Time').value)   || 0,
         Amount: parseFloat(document.getElementById('Amount').value) || 0,
       };
-      for (let i = 1; i <= 28; i++) data[`V${i}`] = 0;
+      for (let i = 1; i <= 28; i++) {
+        data[`V${i}`] = currentPreset ? (currentPreset[`V${i}`] ?? 0) : 0;
+      }
       return data;
     }
 
